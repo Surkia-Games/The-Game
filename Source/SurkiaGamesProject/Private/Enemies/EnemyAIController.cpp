@@ -11,20 +11,19 @@ AEnemyAIController::AEnemyAIController()
 
 	// We get the navigation system using the current world
 	NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-
+	
 	// We create and attach a SphereComponent to use as AttackRadius
-	AttackRadius = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRadius"));
-	AttackRadius->SetupAttachment(GetRootComponent());
+	//AttackRadius = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRadius"));
+	//AttackRadius->SetupAttachment(GetRootComponent());
 
-	// We get the perception component and subscribe to the OnPerceptionUpdated event
-	// to detect the player
-	PerceptionComponent = GetPerceptionComponent();
-	if (PerceptionComponent)
-	{
-		PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdated);
-	}
+	// Create perception component so our enemy can see
+	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
+	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
 
-	else UE_LOG(LogTemp, Warning, TEXT("PerceptionComponent is null"));
+	// Configure sight sense for perception component
+	PerceptionComponent->ConfigureSense(*SightConfig);
+	PerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
+	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdated);
 }
 
 void AEnemyAIController::BeginPlay()
@@ -64,9 +63,10 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 
 void AEnemyAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnPerceptionUpdated"));
 	for (AActor* Actor : UpdatedActors)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
 		// Check if the actor is the player
 		if (Actor->ActorHasTag("Player"))
 		{

@@ -8,8 +8,10 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "NavigationSystem.h"
 #include "Perception/AIPerceptionComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
 #include "EnemyAIController.generated.h"
 
+UENUM(BlueprintType, Category = "AI")
 enum class EAIState : uint8
 {
 	Idle,
@@ -29,11 +31,8 @@ public:
 
 	//void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	class UBehaviorTree* BehaviorTree;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attacking")
-	USphereComponent* AttackRadius;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attacking")
+	//USphereComponent* AttackRadius;
 
 	class UNavigationSystemV1* NavSystem;
 	FVector RandomLocation;
@@ -51,11 +50,16 @@ public:
 
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
+	//UFUNCTION(BlueprintImplementableEvent, Category = "AI")
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float PatrolRadius = 1000.0f;
+
+	// Sight sense config
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
+	UAISenseConfig_Sight* SightConfig;
 
 private:
 	// State of the enemy AI
@@ -63,7 +67,4 @@ private:
 
 	// Current target NavLocation
 	FNavLocation TargetLocation;
-
-	// AI perception
-	UAIPerceptionSystem* PerceptionSystem;
 };
