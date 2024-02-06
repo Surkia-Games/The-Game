@@ -7,6 +7,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "NavigationSystem.h"
+#include "Perception/AIPerceptionComponent.h"
 #include "EnemyAIController.generated.h"
 
 enum class EAIState : uint8
@@ -26,7 +27,7 @@ public:
 	AEnemyAIController();
 	void BeginPlay() override;
 
-	
+	//void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	class UBehaviorTree* BehaviorTree;
@@ -50,11 +51,19 @@ public:
 
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
+	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float PatrolRadius = 1000.0f;
 
 private:
+	// State of the enemy AI
 	EAIState AIState = EAIState::Idle;
+
+	// Current target NavLocation
 	FNavLocation TargetLocation;
+
+	// AI perception
+	UAIPerceptionSystem* PerceptionSystem;
 };

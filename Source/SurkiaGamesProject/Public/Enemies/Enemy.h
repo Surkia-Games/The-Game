@@ -20,11 +20,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, Category = "AI")
-	class AEnemyAIController* AIController;
-
-	// This will subscribe to the OnMoveCompleted event of the AIController
-	void OnAIMoveCompleted(struct FAIRequestID RequestID, const struct FPathFollowingResult& Result);
+	//UPROPERTY(EditAnywhere, Category = "AI")
+	//class AEnemyAIController* AIController;
 
 public:
 	// Called every frame
