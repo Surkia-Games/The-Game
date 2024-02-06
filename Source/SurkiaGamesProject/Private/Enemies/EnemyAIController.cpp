@@ -27,4 +27,13 @@ void AEnemyAIController::RandomPatrol()
 	NavSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(), PatrolRadius, TargetLocation);
 
 	MoveToLocation(TargetLocation.Location);
+
+	SetAIState(EAIState::Patrolling);
+}
+
+void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
+{
+	SetAIState(EAIState::Idle);
+
+	Super::OnMoveCompleted(RequestID, Result);
 }

@@ -9,6 +9,14 @@
 #include "NavigationSystem.h"
 #include "EnemyAIController.generated.h"
 
+enum class EAIState : uint8
+{
+	Idle,
+	Patrolling,
+	Chasing,
+	Attacking
+};
+
 UCLASS()
 class SURKIAGAMESPROJECT_API AEnemyAIController : public AAIController
 {
@@ -17,6 +25,8 @@ class SURKIAGAMESPROJECT_API AEnemyAIController : public AAIController
 public:
 	AEnemyAIController();
 	void BeginPlay() override;
+
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	class UBehaviorTree* BehaviorTree;
@@ -30,13 +40,21 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float DetectionRange = 1000.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float RandomWaitTime = 5.0f;
+
 	void RandomPatrol();
+
+	EAIState GetAIState() const { return AIState; }
+	void SetAIState(EAIState NewState) { AIState = NewState; }
+
+	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float PatrolRadius = 1000.0f;
 
 private:
-
+	EAIState AIState = EAIState::Idle;
 	FNavLocation TargetLocation;
 };

@@ -21,9 +21,6 @@ void AEnemy::BeginPlay()
 
 	AIController = Cast<AEnemyAIController>(GetController());
 
-	AIController->GetPathFollowingComponent()
-		->OnRequestFinished.AddUObject(this, &AEnemy::OnAIMoveCompleted);
-
 	// We tell the AI to move to a random location
 	AIController->RandomPatrol();
 }
@@ -33,6 +30,22 @@ void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	//int state = static_cast<int>(AIController->GetAIState());
+	switch (AIController->GetAIState())
+	{
+		case EAIState::Idle:
+			// Do nothing
+			break;
+		case EAIState::Patrolling:
+			// Do nothing
+			break;
+		case EAIState::Chasing:
+			// Do nothing
+			break;
+		case EAIState::Attacking:
+			// Do nothing
+			break;
+	}
 }
 
 // Called to bind functionality to input
@@ -43,8 +56,3 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemy::OnAIMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result)
-{
-	// When the AI finishes moving, we tell it to move to a new location
-	AIController->RandomPatrol();
-}
