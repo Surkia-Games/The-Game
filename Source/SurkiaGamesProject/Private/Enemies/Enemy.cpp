@@ -15,15 +15,15 @@ AEnemy::AEnemy()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("AwarenessRadius"));
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetSphereRadius(500.0f);
-
-	// We bind the OnOverlapBegin event to the OnOverlapBegin method
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapBegin);
 }
 
 // Called when the game starts or when spawned
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// We bind the OnOverlapBegin event to the OnOverlapBegin method
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemy::OnOverlapBegin);
 }
 
 // Called every frame
