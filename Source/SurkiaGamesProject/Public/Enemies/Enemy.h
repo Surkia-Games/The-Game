@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/SphereComponent.h"
 #include "EnemyAIController.h"
 #include "Enemy.generated.h"
 
@@ -21,13 +22,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	//UPROPERTY(EditAnywhere, Category = "AI")
-	//class AEnemyAIController* AIController;
 
-public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	USphereComponent* SphereComponent;
+
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp,
+		AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };
