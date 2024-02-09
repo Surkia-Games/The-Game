@@ -11,19 +11,6 @@ AEnemyAIController::AEnemyAIController()
 
 	// We get the navigation system using the current world
 	NavSystem = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
-	
-	// We create and attach a SphereComponent to use as AttackRadius
-	//AttackRadius = CreateDefaultSubobject<USphereComponent>(TEXT("AttackRadius"));
-	//AttackRadius->SetupAttachment(GetRootComponent());
-
-	// Create perception component so our enemy can see
-	PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
-	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-
-	// Configure sight sense for perception component
-	PerceptionComponent->ConfigureSense(*SightConfig);
-	PerceptionComponent->SetDominantSense(SightConfig->GetSenseImplementation());
-	PerceptionComponent->OnPerceptionUpdated.AddDynamic(this, &AEnemyAIController::OnPerceptionUpdated);
 }
 
 void AEnemyAIController::BeginPlay()
@@ -61,24 +48,19 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 	}
 }
 
-void AEnemyAIController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+void AEnemyAIController::SetTargetLocation(FVector location)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("OnPerceptionUpdated"));
-	for (AActor* Actor : UpdatedActors)
+	if (!NavSystem->GetRandomPointInNavigableRadius(location, 32, TargetLocation))
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
-		// Check if the actor is the player
-		if (Actor->ActorHasTag("Player"))
-		{
-			// Check if the player is within the detection range
-			if (FVector::Dist(Actor->GetActorLocation(), GetPawn()->GetActorLocation()) <= DetectionRange)
-			{
-				// Set the AI state to chasing
-				SetAIState(EAIState::Chasing);
-				
-				// Set target NavLocation to a NavLocation at the player's location
-				TargetLocation = FNavLocation(Actor->GetActorLocation());
-			}
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Couldn't find a random point in the radius"));
+		return;
 	}
+
+	// Prevents jittering
+	if (FVector::Dist(location, TargetLocation.Location) < 32)
+	{
+		return;
+	}
+
+	MoveToLocation(TargetLocation.Location);
 }

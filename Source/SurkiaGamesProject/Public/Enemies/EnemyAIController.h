@@ -29,16 +29,7 @@ public:
 	AEnemyAIController();
 	void BeginPlay() override;
 
-	//void Tick(float DeltaTime) override;
-
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attacking")
-	//USphereComponent* AttackRadius;
-
 	class UNavigationSystemV1* NavSystem;
-	FVector RandomLocation;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float DetectionRange = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float RandomWaitTime = 5.0f;
@@ -50,16 +41,11 @@ public:
 
 	void OnMoveCompleted(FAIRequestID RequestID, const FPathFollowingResult& Result) override;
 
-	//UFUNCTION(BlueprintImplementableEvent, Category = "AI")
-	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	void SetTargetLocation(FVector NewLocation);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float PatrolRadius = 1000.0f;
-
-	// Sight sense config
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Perception")
-	UAISenseConfig_Sight* SightConfig;
 
 private:
 	// State of the enemy AI
