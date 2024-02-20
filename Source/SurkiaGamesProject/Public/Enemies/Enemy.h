@@ -17,11 +17,23 @@ public:
 	// Sets default values for this character's properties
 	AEnemy();
 
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxHealth = 100;
+
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void ChangeState(EAIState newState);
 
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void SetTargetLocation(FVector NewLocation);
+
+	UFUNCTION(BlueprintCallable, Category = "Enemy")
+	void TakeDamage(int32 damage);
+
+	UFUNCTION(BlueprintImplementableEvent, Category = "Enemy")
+	void OnTakeDamage();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Enemy")
+	void OnDeath();
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,4 +42,8 @@ protected:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void Die();
+
+private:
+	int32 m_Health;
 };

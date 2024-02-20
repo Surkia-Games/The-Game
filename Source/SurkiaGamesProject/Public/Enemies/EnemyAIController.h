@@ -53,4 +53,6 @@ private:
 
 	// Current target NavLocation
 	FNavLocation TargetLocation;
+
+	float GetRemainingPathLength() const;
 };

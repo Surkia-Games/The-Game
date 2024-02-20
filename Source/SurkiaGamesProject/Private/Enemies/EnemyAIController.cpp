@@ -3,6 +3,10 @@
 
 #include "Enemies/EnemyAIController.h"
 #include "NavigationSystem.h"
+#include "AbstractNavData.h"
+#include "NavigationData.h"
+#include "NavigationPath.h"
+#include "Navigation/PathFollowingComponent.h"
 
 AEnemyAIController::AEnemyAIController()
 {
@@ -26,6 +30,9 @@ void AEnemyAIController::RandomPatrol()
 	if (!NavSystem)
 		return;
 
+	if(GetRemainingPathLength() > 0.5f)
+		return;
+
 	NavSystem->GetRandomPointInNavigableRadius(GetPawn()->GetActorLocation(), PatrolRadius, TargetLocation);
 
 	MoveToLocation(TargetLocation.Location);
@@ -46,21 +53,48 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 		// We keep chasing the player
 		MoveToLocation(TargetLocation.Location);
 	}
+	else if (GetAIState() == EAIState::Attacking)
+	{
+		// We don't do anything here
+	}
+	else
+	{
+		// We go back to patrolling
+		RandomPatrol();
+	}
 }
 
 void AEnemyAIController::SetTargetLocation(FVector location)
 {
-	if (!NavSystem->GetRandomPointInNavigableRadius(location, 32, TargetLocation))
+	MoveToLocation(location);
+}
+
+float AEnemyAIController::GetRemainingPathLength() const
+{
+	if (NavSystem == nullptr)
+		return 0.0f;
+
+	UPathFollowingComponent* PathFollower = GetPathFollowingComponent();
+
+	if (PathFollower == nullptr)
+		return 0.0f;
+
+	const FNavPathSharedPtr Path = PathFollower->GetPath();
+
+	if (Path == nullptr)
+		return 0.0f;
+
+	float Length = 0.0f;
+
+	TArray<FNavPathPoint> PathPoints = Path->GetPathPoints();
+
+	if(PathPoints.Num() < 2)
+		return 0.0f;
+
+	for (int32 i = 0; i < PathPoints.Num() - 1; i++)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Couldn't find a random point in the radius"));
-		return;
+		Length += FVector::Dist(PathPoints[i].Location, PathPoints[i + 1].Location);
 	}
 
-	// Prevents jittering
-	if (FVector::Dist(location, TargetLocation.Location) < 32)
-	{
-		return;
-	}
-
-	MoveToLocation(TargetLocation.Location);
+	return Length;
 }

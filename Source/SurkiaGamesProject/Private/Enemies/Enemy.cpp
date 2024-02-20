@@ -17,6 +17,7 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+	m_Health = MaxHealth;
 }
 
 // Called every frame
@@ -46,4 +47,24 @@ void AEnemy::SetTargetLocation(FVector newLocation)
 	{
 		AIController->SetTargetLocation(newLocation);
 	}
+}
+
+void AEnemy::TakeDamage(int32 damage)
+{
+	m_Health -= damage;
+
+	// Calling blueprint implementable "event"
+	OnTakeDamage();
+
+	if (m_Health <= 0)
+	{
+		// Calling blueprint implementable "event"
+		OnDeath();
+		Die();
+	}
+}
+
+void AEnemy::Die()
+{
+	Destroy();
 }
