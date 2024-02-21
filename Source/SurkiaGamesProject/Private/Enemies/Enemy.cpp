@@ -5,6 +5,9 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Enemies/EnemyAIController.h"
 #include "AITypes.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -62,6 +65,17 @@ void AEnemy::TakeDamage(int32 damage)
 		OnDeath();
 		Die();
 	}
+}
+
+void AEnemy::Attack(float damage, ACharacter* character)
+{
+	if (!character || !character->CanBeDamaged())
+		return;
+
+	// Damage character with 10.0f damage using a default damage event
+	character->TakeDamage(damage, FDamageEvent(), GetController(), this);
+
+	//UE_LOG(LogTemp, Warning, TEXT("Enemy attacked player for %f damage"), damage);
 }
 
 void AEnemy::Die()

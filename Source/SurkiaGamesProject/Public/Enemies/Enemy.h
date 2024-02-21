@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Enemy")
 	int32 MaxHealth = 100;
 
+	UPROPERTY(EditAnywhere, Category = "Enemy")
+	int32 MaxAttackDamage = 10;
+
 	UFUNCTION(BlueprintCallable, Category = "AI")
 	void ChangeState(EAIState newState);
 
@@ -35,6 +38,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category = "Enemy")
 	void OnDeath();
 
+	/*Attack a character for damage.*/
+	UFUNCTION(BlueprintCallable, Category = "Enemy")
+	virtual void Attack(float damage, ACharacter* character);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,6 +50,7 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Die();
+
 
 private:
 	int32 m_Health;

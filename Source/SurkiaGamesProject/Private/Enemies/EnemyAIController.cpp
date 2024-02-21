@@ -53,11 +53,7 @@ void AEnemyAIController::OnMoveCompleted(FAIRequestID RequestID, const FPathFoll
 		// We keep chasing the player
 		MoveToLocation(TargetLocation.Location);
 	}
-	else if (GetAIState() == EAIState::Attacking)
-	{
-		// We don't do anything here
-	}
-	else
+	else if (GetAIState() == EAIState::Idle)
 	{
 		// We go back to patrolling
 		RandomPatrol();
