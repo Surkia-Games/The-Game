@@ -21,6 +21,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "SunPosition",
+			"Enabled": true
 		}
 	]
 }
